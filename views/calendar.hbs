@@ -1,18 +1,19 @@
-<h2>Calendar</h2>
+<h1>{{title}}</h1>
 <table class="table">
   <thead class="thead-light">
-    <th scope="col">Name</th>
-    <th scope="col">Date</th>
-    <th scope="col">Time</th>
+    <th scope="col">Titre du module</th>
+    <th scope="col">Titre de l'activité</th>
+    <th scope="col">Début</th>
+    <th scope="col">Fin</th>
   </thead>
   <tbody>
     {{#each events}}
-      <tr class="{{#unless this.isRead}}table-primary{{/unless}}">
-        <td>{{this.name}}</td>
-        <td>{{this.date}}</td>
-        <td>{{this.time}}</td>
-      </tr>
+        <tr>
+            <td>{{this.titlemodule}}</td>
+            <td>{{this.acti_title}}</td>
+            <td>{{this.allowed_planning_start}}</td>
+            <td>{{this.allowed_planning_end}}</td>
+        </tr>
     {{/each}}
   </tbody>
 </table>
-<button>Export</button>

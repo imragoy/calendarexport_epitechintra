@@ -1,9 +1,10 @@
-<div class="jumbotron">
-  <h1>Node Graph Tutorial</h1>
-  <p class="lead">This sample app shows how to use the Microsoft Graph API to access Outlook data from Node.js</p>
-  {{#if user}}
-    <p>Welcome {{user}}!</p>
-  {{else}}
-    <a class="btn btn-primary btn-large" href="{{signInUrl}}">Click here to login</a>
-  {{/if}}
-</div>
+<h1>Bienvenue</h1>
+<form action="/userinfo" method="post">
+  Login: <input type="text" name="login" value="{{login}}"><br>
+  Autologin token: <input type="text" name="autologin" value="{{autologin}}"><br>
+  <input type="submit" value="Sauvegarder">
+</form>
+<br/>
+<p>Pour récupérer votre autologin token, connectez vous sur : <a href="https://intra.epitech.eu/admin/autolog" target="_blank">lien autologin</a> et copiez ce qu'il y a après "https://intra.epitech.eu/"</p>
+<br/>
+<a href="calendar">Voir mon planning</a>

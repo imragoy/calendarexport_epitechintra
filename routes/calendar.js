@@ -1,46 +1,35 @@
 var express = require('express');
 var router = express.Router();
-var authHelper = require('../helpers/auth');
+var intranet = require('intra-api');
 
-/* GET /calendar */
-router.get('/', async function(req, res, next) {
-    let parms = { title: 'Calendar' };
-  
-    const accessToken = await authHelper.getAccessToken(req.cookies, res);
-    const userName = req.cookies.graph_user_name;
-  
-    if (accessToken && userName) {
-      parms.user = userName;
-  
-      // Initialize Graph client
-      const client = graph.Client.init({
-        authProvider: (done) => {
-          done(null, accessToken);
-        }
-      });
-  
-      try {
-        // Get the 10 newest messages from inbox
-        const result = await client
-        .api('/me/mailfolders/inbox/messages')
-        .top(10)
-        .select('subject,from,receivedDateTime,isRead,webLink')
-        .orderby('receivedDateTime DESC')
-        .get();
-  
-        parms.messages = result.value;
-        res.render('calendar', parms);
-      } catch (err) {
-        parms.message = 'Error retrieving messages';
-        parms.error = { status: `${err.code}: ${err.message}` };
-        parms.debug = JSON.stringify(err.body, null, 2);
-        res.render('error', parms);
+var parseResult = function(result) {
+  const planning = [];
+
+  for (let i = 0 ; i < result.length ; i++) {
+    if ((result[i].event_registered === "registered" || result[i].event_registered === "N/A") && result[i].past === false) {
+        planning.push(result[i]);
       }
-  
-    } else {
-      // Redirect to home
-      res.redirect('/');
     }
+  return planning;
+}
+
+/* GET home page. */
+router.get('/', function(req, res, next) {
+  const autologinToken = req.cookies.autologin;
+  const login = req.cookies.login;
+  const Intra = new intranet(autologinToken, login);
+
+  Intra
+  .planning
+  .get()
+  .then((result) => {
+    // Parse your planning
+    const planning = parseResult(result);
+    res.render('calendar', {title: 'Calendar', events: planning});
+  })
+  .catch((err) => {
+    console.error(err);
   });
-  
+});
+
 module.exports = router;
