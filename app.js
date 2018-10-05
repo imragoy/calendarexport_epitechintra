@@ -1,17 +1,11 @@
+var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
 var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+var logger = require('morgan');
 
-require('dotenv').config();
-
-var index = require('./routes/index');
-var users = require('./routes/users');
-var authorize = require('./routes/authorize');
-var mail = require('./routes/mail');
-var calendar = require('./routes/calendar');
+var indexRouter = require('./routes/index')
+var calendarRouter = require('./routes/calendar');
 
 var app = express();
 
@@ -19,25 +13,18 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
-app.use('/users', users);
-app.use('/authorize', authorize);
-app.use('/mail', mail);
-app.use('/calendar', calendar)
+app.use('/', indexRouter);
+app.use('/calendar', calendarRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+  next(createError(404));
 });
 
 // error handler

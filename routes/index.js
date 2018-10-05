@@ -1,23 +1,16 @@
 var express = require('express');
 var router = express.Router();
-var authHelper = require('../helpers/auth');
 
 /* GET home page. */
-router.get('/', async function(req, res, next) {
-  let parms = { title: 'Home', active: { home: true } };
+router.get('/', function(req, res, next) {
+    res.render('index', {login: req.cookies.login, autologin: req.cookies.autologin});
+});
 
-  const accessToken = await authHelper.getAccessToken(req.cookies, res);
-  const userName = req.cookies.graph_user_name;
-
-  if (accessToken && userName) {
-    parms.user = userName;
-    parms.debug = `User: ${userName}\nAccess Token: ${accessToken}`;
-  } else {
-    parms.signInUrl = authHelper.getAuthUrl();
-    parms.debug = parms.signInUrl;
-  }
-
-  res.render('index', parms);
+/* POST save user info */
+router.post('/userinfo', function(req, res, next) {
+    res.cookie('login', req.body.login);
+    res.cookie('autologin', req.body.autologin);
+    res.redirect('/');
 });
 
 module.exports = router;
